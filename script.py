@@ -14,8 +14,17 @@ def get_github_api_response(url, headers=None):
 def get_repo_info(repo_url, token=None):
     if repo_url.endswith(".git"):
         repo_url = repo_url[:-4]
-    parts = repo_url.strip("/").split("/")
-    owner, repo = parts[-2:]
+
+    # Parse repository URL to get owner and repo
+    if repo_url.startswith("https://github.com/"):
+        parts = repo_url[len("https://github.com/"):].strip("/").split("/")
+        owner, repo = parts[-2:]
+    else:
+        parts = repo_url.strip("/").split("/")
+        if len(parts) != 2:
+            print("Invalid GitHub repository URL or format.")
+            return None
+        owner, repo = parts
 
     headers = {'Authorization': f'token {token}'} if token else {}
 
